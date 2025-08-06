@@ -28,10 +28,10 @@ const Signup = () => {
   return (
     <>
       <div className="w-full bg-gradient-to-r from-[#000106] via-[#282f51] to-[#000106] h-screen pt-20 flex items-center justify-center">
-        <div className="w-[30%] bg-gradient-to-r from-[rgba(0,3,10,1)] via-[#1b1a1a] to-[rgba(0,3,10,1)] h-[93%] flex justify-start items-center flex-col p-2 gap-1 rounded-xl text-white">
+        <div className="w-[30%] bg-gradient-to-r from-[rgba(0,3,10,1)] via-[#1b1a1a] to-[rgba(0,3,10,1)] h-[87%] flex justify-start items-center flex-col p-2 gap-1 rounded-xl text-white">
           <div className="flex flex-col justify-center text-center items-center">
-            <img src={logo} className="w-28 rounded-3xl" />
-            <p className="text-lg">Track Your Emotions Now!</p>
+            <img src={logo} className="w-36 rounded-3xl" />
+            <p className="text-lg">Chat With Your PDF's Now!</p>
           </div>
           <form
             className="flex flex-col w-full gap-2 p-5 text-white"
