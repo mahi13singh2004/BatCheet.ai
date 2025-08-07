@@ -146,15 +146,17 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20">
-      <div className="flex-1 flex flex-col">
+    <div className="flex flex-col md:flex-row h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20">
+      
+      {/* Main chat container */}
+      <div className="flex-1 flex flex-col min-h-0">
         {!isNavigating && (
-          <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4 shadow-sm">
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+          <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-4 sm:px-6 py-3 shadow-sm">
+            <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
                 Document Chat
               </h1>
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-wrap items-center space-x-2">
                 <button
                   onClick={handleOpenSummaryModal}
                   disabled={chats.length === 0}
@@ -181,7 +183,7 @@ export default function ChatPage() {
                 <div className="bg-gray-100 rounded-lg p-1 flex shadow-sm">
                   <button
                     onClick={() => setMode("text")}
-                    className={`px-4 py-2 rounded-md transition-all duration-200 font-medium ${
+                    className={`px-3 sm:px-4 py-2 rounded-md transition-all duration-200 font-medium ${
                       mode === "text"
                         ? "bg-white text-blue-600 shadow-sm"
                         : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
@@ -191,7 +193,7 @@ export default function ChatPage() {
                   </button>
                   <button
                     onClick={() => setMode("voice")}
-                    className={`px-4 py-2 rounded-md transition-all duration-200 font-medium ${
+                    className={`px-3 sm:px-4 py-2 rounded-md transition-all duration-200 font-medium ${
                       mode === "voice"
                         ? "bg-white text-blue-600 shadow-sm"
                         : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
@@ -205,7 +207,7 @@ export default function ChatPage() {
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           <div className="max-w-4xl mx-auto space-y-4">
             {!loading && chats.length === 0 && (
               <div className="text-center text-gray-500 mt-20">
@@ -225,7 +227,7 @@ export default function ChatPage() {
               ))}
 
             {loading && (
-              <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200 max-w-lg mx-auto">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
                   <div
@@ -246,13 +248,13 @@ export default function ChatPage() {
         </div>
 
         {!isNavigating && (
-          <div className="bg-white/80 backdrop-blur-sm border-t border-gray-200 p-6 shadow-lg">
+          <div className="bg-white/80 backdrop-blur-sm border-t border-gray-200 p-4 sm:p-6 shadow-lg">
             <div className="max-w-4xl mx-auto">
               {mode === "text" ? (
-                <form onSubmit={handleSend} className="flex gap-3">
+                <form onSubmit={handleSend} className="flex gap-3 flex-col sm:flex-row">
                   <input
                     type="text"
-                    className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                    className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm w-full"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask something about the document..."
@@ -260,14 +262,14 @@ export default function ChatPage() {
                   />
                   <button
                     type="submit"
-                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                     disabled={!input.trim() || loading}
                   >
                     Send
                   </button>
                 </form>
               ) : (
-                <div className="flex justify-center">
+                <div className="flex justify-center mt-2">
                   <button
                     onClick={isListening ? stopVoiceInput : startVoiceInput}
                     className={`px-8 py-3 rounded-lg text-white font-semibold transition-all duration-200 shadow-sm ${
@@ -285,21 +287,20 @@ export default function ChatPage() {
         )}
       </div>
 
+      {/* Side panel */}
       {!isNavigating && (
-        <div className="w-80 bg-white/80 backdrop-blur-sm border-l border-gray-200 p-6 shadow-lg flex flex-col h-full">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">
-            How to use
-          </h2>
-          <div className="space-y-4 text-sm text-gray-600 flex-1">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-1">Text Mode</h3>
+        <aside className="w-full md:w-80 bg-white/80 backdrop-blur-sm border-t md:border-t-0 md:border-l border-gray-200 p-4 sm:p-6 shadow-lg flex flex-col h-64 md:h-auto mt-4 md:mt-0">
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">How to use</h2>
+          <div className="space-y-3 text-sm text-gray-600 flex-1 overflow-y-auto">
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <h3 className="text-xl font-bold text-gray-800 mb-1">Text Mode</h3>
               <p>
                 Type your questions in the input field and press Send to get AI
                 responses about your document.
               </p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-1">Voice Mode</h3>
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <h3 className="text-xl font-bold text-gray-800 mb-1">Voice Mode</h3>
               <p>
                 Click "Start Voice Input" and speak your question. The AI will
                 respond both in text and voice.
@@ -317,22 +318,23 @@ export default function ChatPage() {
               </ul>
             </div>
           </div>
-          <div className="flex justify-center mt-8">
+
+          <div className="flex justify-center mt-6 md:mt-8">
             {mode === "text" ? (
               <FaKeyboard
-                size={64}
+                size={48}
                 className="text-indigo-400"
                 title="Keyboard Typing Mode"
               />
             ) : (
               <CiMicrophoneOn
-                size={64}
+                size={48}
                 className="text-indigo-400"
                 title="Voice Mode"
               />
             )}
           </div>
-        </div>
+        </aside>
       )}
 
       <SummaryModal
