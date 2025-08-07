@@ -21,6 +21,9 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/docs", docRoutes);
+app.get("/api/ping", (req, res) => {
+  res.json({ message: "pong" });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
