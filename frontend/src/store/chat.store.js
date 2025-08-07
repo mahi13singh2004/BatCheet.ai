@@ -42,7 +42,7 @@ export const useChatStore = create((set) => ({
 
       if (shouldSpeak && "speechSynthesis" in window) {
         const utterance = new SpeechSynthesisUtterance(aiResponse);
-        utterance.rate = 0.9;
+        utterance.rate = 1.8;
         utterance.pitch = 1;
         utterance.volume = 0.8;
         speechSynthesis.speak(utterance);

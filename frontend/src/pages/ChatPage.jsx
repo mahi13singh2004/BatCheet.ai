@@ -292,20 +292,20 @@ export default function ChatPage() {
           </h2>
           <div className="space-y-4 text-sm text-gray-600 flex-1">
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-medium text-gray-800 mb-2">Text Mode</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-1">Text Mode</h3>
               <p>
                 Type your questions in the input field and press Send to get AI
                 responses about your document.
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-medium text-gray-800 mb-2">Voice Mode</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-1">Voice Mode</h3>
               <p>
                 Click "Start Voice Input" and speak your question. The AI will
                 respond both in text and voice.
               </p>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <div className="bg-blue-50 p-2 rounded-lg border border-blue-200">
               <h3 className="font-medium text-blue-800 mb-2">Tips</h3>
               <ul className="list-disc list-inside space-y-1 text-blue-700">
                 <li>Ask specific questions for better answers</li>
