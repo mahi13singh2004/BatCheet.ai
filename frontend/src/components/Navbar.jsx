@@ -9,7 +9,7 @@ const Navbar = () => {
   const { logout, user } = useAuthStore();
   const { startLoading } = useNavigationStore();
 
-
+  // for hamburger menu toggle
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleButton = async () => {
@@ -26,23 +26,22 @@ const Navbar = () => {
   const handleLogoClick = () => {
     startLoading();
     navigate("/");
-    setMenuOpen(false); 
+    setMenuOpen(false); // close menu after navigation
   };
 
   const handleProfileClick = () => {
     startLoading();
-    setMenuOpen(false); 
+    setMenuOpen(false);
   };
 
   const handleUploadClick = () => {
     startLoading();
-    setMenuOpen(false); 
+    setMenuOpen(false);
   };
 
   return (
     <nav className="h-20 w-full backdrop-blur-md border-b border-white/10 flex justify-between items-center fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 md:px-10 bg-white/50 dark:bg-black/50">
-      
-   
+      {/* Logo Section */}
       <div
         className="flex items-center cursor-pointer select-none"
         onClick={handleLogoClick}
@@ -55,6 +54,7 @@ const Navbar = () => {
         </h1>
       </div>
       
+      {/* Hamburger button for mobile */}
       <button
         className="sm:hidden flex flex-col justify-center items-center w-10 h-10 rounded hover:bg-indigo-100 transition"
         onClick={() => setMenuOpen(!menuOpen)}
@@ -78,7 +78,9 @@ const Navbar = () => {
         ></span>
       </button>
       
+      {/* Nav Links & Actions */}
       <div
+        // (1) inline on desktop, (2) vertical and overlayed on mobile if menuOpen
         className={`flex-col sm:flex-row sm:static fixed sm:flex right-0 top-20 bg-white/95 dark:bg-black/90 backdrop-blur-md sm:bg-transparent
           items-center transition-all
           gap-2 sm:gap-4 md:gap-6
@@ -96,19 +98,17 @@ const Navbar = () => {
           <Link
             to="/profile"
             onClick={handleProfileClick}
-            className="
-              block w-full sm:w-auto
-              px-4 py-2 rounded-lg font-medium
-              bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
-              text-white shadow hover:from-indigo-600 hover:to-pink-600
-              transition text-center
-            "
+            className="block w-full sm:w-auto px-4 py-2 rounded-lg font-medium text-indigo-600 hover:bg-indigo-50 transition text-center"
           >
             My Documents
           </Link>
         )}
 
-        <Link to="/upload" onClick={handleUploadClick} className="block w-full sm:w-auto">
+        <Link
+          to="/upload"
+          onClick={handleUploadClick}
+          className="block w-full sm:w-auto"
+        >
           <button className="w-full px-4 py-2 rounded-lg font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition">
             Upload Now
           </button>
