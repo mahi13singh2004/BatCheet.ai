@@ -7,6 +7,7 @@ import { useAuthStore } from "./store/auth.store.js"
 import ProtectedRoute from "./components/ProtectedRoute"
 import RedirectRoute from "./components/RedirectRoute"
 import Navbar from "./components/Navbar"
+import Upload from "./pages/Upload.jsx";
 const App = () => {
   const { checkAuth } = useAuthStore()
   const location = useLocation();
@@ -18,11 +19,12 @@ const App = () => {
 
   return (
     <>
-    {!hideNavbar && <Navbar/>}
+      {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/login" element={<RedirectRoute><Login /></RedirectRoute>} />
         <Route path="/signup" element={<RedirectRoute><Signup /></RedirectRoute>} />
+        <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
       </Routes>
     </>
   );
