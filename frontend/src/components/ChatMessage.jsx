@@ -1,4 +1,3 @@
-// src/components/ChatMessage.jsx
 export default function ChatMessage({ sender, text }) {
     const isUser = sender === "user";
     return (

@@ -29,11 +29,9 @@ export const chatWithDocument = async (req, res) => {
 
     const answer = await askGemini(document.extractedText, message);
 
-    // Save or update chat history
     let chat = await Chat.findOne({ userId, documentId: id });
 
     if (!chat) {
-      // Create new chat if it doesn't exist
       chat = new Chat({
         userId,
         documentId: id,
@@ -43,7 +41,6 @@ export const chatWithDocument = async (req, res) => {
         ],
       });
     } else {
-      // Add new messages to existing chat
       chat.messages.push(
         { sender: "user", text: message },
         { sender: "ai", text: answer }
@@ -133,7 +130,6 @@ export const summarizeChat = async (req, res) => {
     console.log("📝 Generating document summary for:", document.title);
     console.log("📄 Document content length:", document.extractedText.length);
 
-    // Limit document content to avoid token limits
     const limitedContent = document.extractedText.substring(0, 3000);
     console.log("📄 Limited content length:", limitedContent.length);
 
@@ -201,7 +197,6 @@ export const sendSummaryEmail = async (req, res) => {
 
     console.log("📝 Generating summary for email...");
 
-    // Generate document summary - limit content to avoid token limits
     const limitedContent = document.extractedText.substring(0, 3000);
 
     const summaryPrompt = `Summarize this document in a clear, structured way. Include the main topics, key points, and important information.
@@ -226,7 +221,7 @@ Please provide a comprehensive summary with:
     const summaryData = {
       summary,
       documentTitle: document.title,
-      messageCount: 0, // Since we're summarizing the document, not chat
+      messageCount: 0,
       timestamp: new Date().toISOString(),
     };
 

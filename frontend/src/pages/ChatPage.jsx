@@ -5,6 +5,8 @@ import ChatMessage from "../components/ChatMessage";
 import TypingLoader from "../components/TypingLoader";
 import SummaryModal from "../components/SummaryModal.jsx";
 import { useState, useEffect, useRef } from "react";
+import { FaKeyboard } from "react-icons/fa";
+import { CiMicrophoneOn } from "react-icons/ci";
 
 export default function ChatPage() {
   const { id } = useParams();
@@ -14,10 +16,20 @@ export default function ChatPage() {
   const [isRecognitionRunning, setIsRecognitionRunning] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
 
-  const { chats, sendMessage, loading, loadChatHistory, clearChatHistory, summarizeChat, sendSummaryEmail, summary, summaryLoading, clearSummary } = useChatStore();
+  const {
+    chats,
+    sendMessage,
+    loading,
+    loadChatHistory,
+    clearChatHistory,
+    summarizeChat,
+    sendSummaryEmail,
+    summary,
+    summaryLoading,
+    clearSummary,
+  } = useChatStore();
   const { isLoading: isNavigating } = useNavigationStore();
   const recognitionRef = useRef(null);
-
 
   useEffect(() => {
     if (id && !isNavigating) {
@@ -35,7 +47,7 @@ export default function ChatPage() {
     try {
       await summarizeChat(id);
     } catch (error) {
-      alert(error.message || 'Failed to generate summary. Please try again.');
+      alert(error.message || "Failed to generate summary. Please try again.");
     }
   };
 
@@ -58,7 +70,8 @@ export default function ChatPage() {
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current = new SpeechRecognition();
     recognitionRef.current.continuous = false;
     recognitionRef.current.interimResults = false;
@@ -96,7 +109,12 @@ export default function ChatPage() {
   }, [id, sendMessage]);
 
   useEffect(() => {
-    if (mode === "voice" && isListening && recognitionRef.current && !isRecognitionRunning) {
+    if (
+      mode === "voice" &&
+      isListening &&
+      recognitionRef.current &&
+      !isRecognitionRunning
+    ) {
       try {
         recognitionRef.current.start();
       } catch (error) {
@@ -116,7 +134,7 @@ export default function ChatPage() {
   const stopVoiceInput = () => {
     if (recognitionRef.current) {
       try {
-        if (recognitionRef.current.state === 'recording') {
+        if (recognitionRef.current.state === "recording") {
           recognitionRef.current.stop();
         }
       } catch (error) {
@@ -140,11 +158,16 @@ export default function ChatPage() {
                 <button
                   onClick={handleOpenSummaryModal}
                   disabled={chats.length === 0}
-                  className={`text-sm font-medium transition-colors px-3 py-1 rounded-md ${chats.length === 0
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                    }`}
-                  title={chats.length === 0 ? "Start a conversation first to summarize" : "Summarize this chat"}
+                  className={`text-sm font-medium transition-colors px-3 py-1 rounded-md ${
+                    chats.length === 0
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                  }`}
+                  title={
+                    chats.length === 0
+                      ? "Start a conversation first to summarize"
+                      : "Summarize this chat"
+                  }
                 >
                   📝 Summarize
                 </button>
@@ -158,19 +181,21 @@ export default function ChatPage() {
                 <div className="bg-gray-100 rounded-lg p-1 flex shadow-sm">
                   <button
                     onClick={() => setMode("text")}
-                    className={`px-4 py-2 rounded-md transition-all duration-200 font-medium ${mode === "text"
-                      ? "bg-white text-blue-600 shadow-sm"
-                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                      }`}
+                    className={`px-4 py-2 rounded-md transition-all duration-200 font-medium ${
+                      mode === "text"
+                        ? "bg-white text-blue-600 shadow-sm"
+                        : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                    }`}
                   >
                     Text Mode
                   </button>
                   <button
                     onClick={() => setMode("voice")}
-                    className={`px-4 py-2 rounded-md transition-all duration-200 font-medium ${mode === "voice"
-                      ? "bg-white text-blue-600 shadow-sm"
-                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                      }`}
+                    className={`px-4 py-2 rounded-md transition-all duration-200 font-medium ${
+                      mode === "voice"
+                        ? "bg-white text-blue-600 shadow-sm"
+                        : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                    }`}
                   >
                     Voice Mode
                   </button>
@@ -185,23 +210,36 @@ export default function ChatPage() {
             {!loading && chats.length === 0 && (
               <div className="text-center text-gray-500 mt-20">
                 <div className="text-6xl mb-4">💬</div>
-                <h3 className="text-xl font-medium mb-2 text-gray-700">Start a conversation</h3>
-                <p className="text-gray-400">Ask questions about your document to get started</p>
+                <h3 className="text-xl font-medium mb-2 text-gray-700">
+                  Start a conversation
+                </h3>
+                <p className="text-gray-400">
+                  Ask questions about your document to get started
+                </p>
               </div>
             )}
 
-            {!loading && chats.map((chat, idx) => (
-              <ChatMessage key={idx} sender={chat.sender} text={chat.text} />
-            ))}
+            {!loading &&
+              chats.map((chat, idx) => (
+                <ChatMessage key={idx} sender={chat.sender} text={chat.text} />
+              ))}
 
             {loading && (
               <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div
+                    className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.1s" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  ></div>
                 </div>
-                <span className="text-blue-600 font-medium">AI is thinking...</span>
+                <span className="text-blue-600 font-medium">
+                  AI is thinking...
+                </span>
               </div>
             )}
           </div>
@@ -232,10 +270,11 @@ export default function ChatPage() {
                 <div className="flex justify-center">
                   <button
                     onClick={isListening ? stopVoiceInput : startVoiceInput}
-                    className={`px-8 py-3 rounded-lg text-white font-semibold transition-all duration-200 shadow-sm ${isListening
-                      ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
-                      : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-                      }`}
+                    className={`px-8 py-3 rounded-lg text-white font-semibold transition-all duration-200 shadow-sm ${
+                      isListening
+                        ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+                        : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+                    }`}
                   >
                     {isListening ? "Stop Listening" : "Start Voice Input"}
                   </button>
@@ -247,16 +286,24 @@ export default function ChatPage() {
       </div>
 
       {!isNavigating && (
-        <div className="w-80 bg-white/80 backdrop-blur-sm border-l border-gray-200 p-6 shadow-lg">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">How to use</h2>
-          <div className="space-y-4 text-sm text-gray-600">
+        <div className="w-80 bg-white/80 backdrop-blur-sm border-l border-gray-200 p-6 shadow-lg flex flex-col h-full">
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">
+            How to use
+          </h2>
+          <div className="space-y-4 text-sm text-gray-600 flex-1">
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-medium text-gray-800 mb-2">Text Mode</h3>
-              <p>Type your questions in the input field and press Send to get AI responses about your document.</p>
+              <p>
+                Type your questions in the input field and press Send to get AI
+                responses about your document.
+              </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-medium text-gray-800 mb-2">Voice Mode</h3>
-              <p>Click "Start Voice Input" and speak your question. The AI will respond both in text and voice.</p>
+              <p>
+                Click "Start Voice Input" and speak your question. The AI will
+                respond both in text and voice.
+              </p>
             </div>
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <h3 className="font-medium text-blue-800 mb-2">Tips</h3>
@@ -264,9 +311,26 @@ export default function ChatPage() {
                 <li>Ask specific questions for better answers</li>
                 <li>Use voice mode for hands-free interaction</li>
                 <li>Previous chats are saved automatically</li>
-                <li>Use the Summarize button to get a summary of your conversation</li>
+                <li>
+                  Use the Summarize button to get a summary of your conversation
+                </li>
               </ul>
             </div>
+          </div>
+          <div className="flex justify-center mt-8">
+            {mode === "text" ? (
+              <FaKeyboard
+                size={64}
+                className="text-indigo-400"
+                title="Keyboard Typing Mode"
+              />
+            ) : (
+              <CiMicrophoneOn
+                size={64}
+                className="text-indigo-400"
+                title="Voice Mode"
+              />
+            )}
           </div>
         </div>
       )}

@@ -1,4 +1,3 @@
-// src/components/TypingLoader.jsx
 export default function TypingLoader() {
     return (
       <div className="flex justify-start mb-2">

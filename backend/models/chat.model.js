@@ -33,7 +33,6 @@ const chatSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Create a compound index to ensure one chat per user per document
 chatSchema.index({ userId: 1, documentId: 1 }, { unique: true });
 
 const Chat = mongoose.model("Chat", chatSchema);
