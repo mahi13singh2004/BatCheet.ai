@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useChatStore } from "../store/chat.store.js";
 import { useNavigationStore } from "../store/navigation.store.js";
 import ChatMessage from "../components/ChatMessage";
-import TypingLoader from "../components/TypingLoader";
 import SummaryModal from "../components/SummaryModal.jsx";
 import { useState, useEffect, useRef } from "react";
 import { FaKeyboard } from "react-icons/fa";
@@ -147,23 +146,22 @@ export default function ChatPage() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20">
-      
       {/* Main chat container */}
       <div className="flex-1 flex flex-col min-h-0">
         {!isNavigating && (
-          <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-4 sm:px-6 py-3 shadow-sm">
-            <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+          <div className="bg-white/90 backdrop-blur-md border-b border-gray-300 px-6 py-4 shadow-sm mb-4 rounded-md max-w-4xl mx-auto">
+            <div className="flex flex-wrap justify-between items-center gap-3">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
                 Document Chat
               </h1>
-              <div className="flex flex-wrap items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={handleOpenSummaryModal}
                   disabled={chats.length === 0}
-                  className={`text-sm font-medium transition-colors px-3 py-1 rounded-md ${
+                  className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
                     chats.length === 0
-                      ? "text-gray-400 cursor-not-allowed"
-                      : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                   }`}
                   title={
                     chats.length === 0
@@ -173,19 +171,21 @@ export default function ChatPage() {
                 >
                   📝 Summarize
                 </button>
+
                 <button
                   onClick={() => clearChatHistory(id)}
-                  className="text-red-600 hover:text-red-700 text-sm font-medium transition-colors px-3 py-1 rounded-md hover:bg-red-50"
+                  className="bg-red-100 hover:bg-red-200 text-red-600 hover:text-red-700 text-sm font-semibold transition-colors px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1"
                   title="Clear chat history"
                 >
                   Clear Chat
                 </button>
+
                 <div className="bg-gray-100 rounded-lg p-1 flex shadow-sm">
                   <button
                     onClick={() => setMode("text")}
-                    className={`px-3 sm:px-4 py-2 rounded-md transition-all duration-200 font-medium ${
+                    className={`px-4 py-2 rounded-md transition-all duration-200 font-semibold ${
                       mode === "text"
-                        ? "bg-white text-blue-600 shadow-sm"
+                        ? "bg-white text-blue-600 shadow-md"
                         : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
                     }`}
                   >
@@ -193,9 +193,9 @@ export default function ChatPage() {
                   </button>
                   <button
                     onClick={() => setMode("voice")}
-                    className={`px-3 sm:px-4 py-2 rounded-md transition-all duration-200 font-medium ${
+                    className={`px-4 py-2 rounded-md transition-all duration-200 font-semibold ${
                       mode === "voice"
-                        ? "bg-white text-blue-600 shadow-sm"
+                        ? "bg-white text-blue-600 shadow-md"
                         : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
                     }`}
                   >
@@ -208,7 +208,7 @@ export default function ChatPage() {
         )}
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <div className="max-w-4xl mx-auto space-y-4">
+          <div className="max-w-4xl mx-auto space-y-6">
             {!loading && chats.length === 0 && (
               <div className="text-center text-gray-500 mt-20">
                 <div className="text-6xl mb-4">💬</div>
@@ -259,10 +259,11 @@ export default function ChatPage() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask something about the document..."
                     disabled={loading}
+                    autoComplete="off"
                   />
                   <button
                     type="submit"
-                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                     disabled={!input.trim() || loading}
                   >
                     Send
@@ -291,30 +292,28 @@ export default function ChatPage() {
       {!isNavigating && (
         <aside className="w-full md:w-80 bg-white/80 backdrop-blur-sm border-t md:border-t-0 md:border-l border-gray-200 p-4 sm:p-6 shadow-lg flex flex-col h-64 md:h-auto mt-4 md:mt-0">
           <h2 className="text-lg font-semibold mb-4 text-gray-800">How to use</h2>
-          <div className="space-y-3 text-sm text-gray-600 flex-1 overflow-y-auto">
-            <div className="bg-gray-50 p-3 rounded-lg">
+          <div className="space-y-4 text-sm text-gray-600 flex-1 overflow-y-auto">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="text-xl font-bold text-gray-800 mb-1">Text Mode</h3>
               <p>
                 Type your questions in the input field and press Send to get AI
                 responses about your document.
               </p>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="text-xl font-bold text-gray-800 mb-1">Voice Mode</h3>
               <p>
                 Click "Start Voice Input" and speak your question. The AI will
                 respond both in text and voice.
               </p>
             </div>
-            <div className="bg-blue-50 p-2 rounded-lg border border-blue-200">
+            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
               <h3 className="font-medium text-blue-800 mb-2">Tips</h3>
               <ul className="list-disc list-inside space-y-1 text-blue-700">
                 <li>Ask specific questions for better answers</li>
                 <li>Use voice mode for hands-free interaction</li>
                 <li>Previous chats are saved automatically</li>
-                <li>
-                  Use the Summarize button to get a summary of your conversation
-                </li>
+                <li>Use the Summarize button to get a summary of your conversation</li>
               </ul>
             </div>
           </div>
