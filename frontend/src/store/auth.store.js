@@ -6,6 +6,7 @@ axiosInstance.defaults.withCredentials = true;
 export const useAuthStore = create((set) => ({
   user: null,
   loading: false,
+  checkAuthLoading: false,
   err: null,
 
   signup: async (data) => {
@@ -17,8 +18,7 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       set({ err: error.response.data.message });
       return false;
-    }
-    finally {
+    } finally {
       set({ loading: false });
     }
   },
@@ -49,7 +49,7 @@ export const useAuthStore = create((set) => ({
   },
 
   checkAuth: async () => {
-    set({ loading: true });
+    set({ checkAuthLoading: true });
     try {
       const res = await axiosInstance.get("/api/auth/checkAuth");
       set({ user: res.data.user, err: null });
@@ -61,9 +61,8 @@ export const useAuthStore = create((set) => ({
       } else {
         set({ user: null });
       }
-    }
-    finally {
-      set({ loading: false });
+    } finally {
+      set({ checkAuthLoading: false });
     }
   },
 

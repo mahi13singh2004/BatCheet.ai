@@ -7,6 +7,17 @@ export const useChatStore = create((set) => ({
   chats: [],
   loading: false,
 
+  loadChatHistory: async (docId) => {
+    set({ loading: true });
+    try {
+      const res = await axiosInstance.get(`/api/docs/${docId}/chat`);
+      set({ chats: res.data.messages, loading: false });
+    } catch (error) {
+      console.error("❌ Load chat history error:", error);
+      set({ chats: [], loading: false });
+    }
+  },
+
   sendMessage: async (docId, userMessage, shouldSpeak = false) => {
     if (!userMessage.trim()) return;
 
@@ -47,4 +58,13 @@ export const useChatStore = create((set) => ({
   },
 
   clearChat: () => set({ chats: [] }),
+
+  clearChatHistory: async (docId) => {
+    try {
+      await axiosInstance.delete(`/api/docs/${docId}/chat`);
+      set({ chats: [] });
+    } catch (error) {
+      console.error("❌ Clear chat history error:", error);
+    }
+  },
 }));

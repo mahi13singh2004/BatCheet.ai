@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useChatStore } from "../store/chat.store.js";
+import { useNavigationStore } from "../store/navigation.store.js";
 import ChatMessage from "../components/ChatMessage";
 import TypingLoader from "../components/TypingLoader";
 import { useState, useEffect, useRef } from "react";
@@ -11,9 +12,16 @@ export default function ChatPage() {
   const [isListening, setIsListening] = useState(false);
   const [isRecognitionRunning, setIsRecognitionRunning] = useState(false);
 
-  const { chats, sendMessage, loading } = useChatStore();
+  const { chats, sendMessage, loading, loadChatHistory, clearChatHistory } = useChatStore();
+  const { isLoading: isNavigating } = useNavigationStore();
   const recognitionRef = useRef(null);
 
+  // Load chat history when component mounts or document ID changes
+  useEffect(() => {
+    if (id && !isNavigating) {
+      loadChatHistory(id);
+    }
+  }, [id, loadChatHistory, isNavigating]);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -97,50 +105,63 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20">
       <div className="flex-1 flex flex-col">
-        <div className="bg-white border-b px-6 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-xl font-semibold text-gray-800">Document Chat</h1>
-            <div className="bg-gray-100 rounded-lg p-1 flex">
-              <button
-                onClick={() => setMode("text")}
-                className={`px-4 py-2 rounded-md transition-colors ${mode === "text"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-800"
-                  }`}
-              >
-                Text Mode
-              </button>
-              <button
-                onClick={() => setMode("voice")}
-                className={`px-4 py-2 rounded-md transition-colors ${mode === "voice"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-800"
-                  }`}
-              >
-                Voice Mode
-              </button>
+        {!isNavigating && (
+          <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4 shadow-sm">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                Document Chat
+              </h1>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => clearChatHistory(id)}
+                  className="text-red-600 hover:text-red-700 text-sm font-medium transition-colors px-3 py-1 rounded-md hover:bg-red-50"
+                  title="Clear chat history"
+                >
+                  Clear Chat
+                </button>
+                <div className="bg-gray-100 rounded-lg p-1 flex shadow-sm">
+                  <button
+                    onClick={() => setMode("text")}
+                    className={`px-4 py-2 rounded-md transition-all duration-200 font-medium ${mode === "text"
+                      ? "bg-white text-blue-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                      }`}
+                  >
+                    Text Mode
+                  </button>
+                  <button
+                    onClick={() => setMode("voice")}
+                    className={`px-4 py-2 rounded-md transition-all duration-200 font-medium ${mode === "voice"
+                      ? "bg-white text-blue-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                      }`}
+                  >
+                    Voice Mode
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto space-y-4">
-            {chats.length === 0 && !loading && (
+            {!loading && chats.length === 0 && (
               <div className="text-center text-gray-500 mt-20">
                 <div className="text-6xl mb-4">💬</div>
-                <h3 className="text-xl font-medium mb-2">Start a conversation</h3>
+                <h3 className="text-xl font-medium mb-2 text-gray-700">Start a conversation</h3>
                 <p className="text-gray-400">Ask questions about your document to get started</p>
               </div>
             )}
 
-            {chats.map((chat, idx) => (
+            {!loading && chats.map((chat, idx) => (
               <ChatMessage key={idx} sender={chat.sender} text={chat.text} />
             ))}
 
             {loading && (
-              <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -152,64 +173,68 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <div className="bg-white border-t p-6">
-          <div className="max-w-4xl mx-auto">
-            {mode === "text" ? (
-              <form onSubmit={handleSend} className="flex gap-3">
-                <input
-                  type="text"
-                  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask something about the document..."
-                  disabled={loading}
-                />
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={!input.trim() || loading}
-                >
-                  Send
-                </button>
-              </form>
-            ) : (
-              <div className="flex justify-center">
-                <button
-                  onClick={isListening ? stopVoiceInput : startVoiceInput}
-                  className={`px-8 py-3 rounded-lg text-white font-semibold transition-colors ${isListening
-                    ? "bg-red-500 hover:bg-red-600"
-                    : "bg-green-500 hover:bg-green-600"
-                    }`}
-                >
-                  {isListening ? "Stop Listening" : "Start Voice Input"}
-                </button>
-              </div>
-            )}
+        {!isNavigating && (
+          <div className="bg-white/80 backdrop-blur-sm border-t border-gray-200 p-6 shadow-lg">
+            <div className="max-w-4xl mx-auto">
+              {mode === "text" ? (
+                <form onSubmit={handleSend} className="flex gap-3">
+                  <input
+                    type="text"
+                    className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Ask something about the document..."
+                    disabled={loading}
+                  />
+                  <button
+                    type="submit"
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    disabled={!input.trim() || loading}
+                  >
+                    Send
+                  </button>
+                </form>
+              ) : (
+                <div className="flex justify-center">
+                  <button
+                    onClick={isListening ? stopVoiceInput : startVoiceInput}
+                    className={`px-8 py-3 rounded-lg text-white font-semibold transition-all duration-200 shadow-sm ${isListening
+                      ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+                      : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+                      }`}
+                  >
+                    {isListening ? "Stop Listening" : "Start Voice Input"}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      <div className="w-80 bg-white border-l p-6">
-        <h2 className="text-lg font-semibold mb-4">How to use</h2>
-        <div className="space-y-4 text-sm text-gray-600">
-          <div>
-            <h3 className="font-medium text-gray-800 mb-2">Text Mode</h3>
-            <p>Type your questions in the input field and press Send to get AI responses about your document.</p>
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-800 mb-2">Voice Mode</h3>
-            <p>Click "Start Voice Input" and speak your question. The AI will respond both in text and voice.</p>
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-800 mb-2">Tips</h3>
-            <ul className="list-disc list-inside space-y-1">
-              <li>Ask specific questions for better answers</li>
-              <li>Use voice mode for hands-free interaction</li>
-              <li>Previous chats are saved automatically</li>
-            </ul>
+      {!isNavigating && (
+        <div className="w-80 bg-white/80 backdrop-blur-sm border-l border-gray-200 p-6 shadow-lg">
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">How to use</h2>
+          <div className="space-y-4 text-sm text-gray-600">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-medium text-gray-800 mb-2">Text Mode</h3>
+              <p>Type your questions in the input field and press Send to get AI responses about your document.</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-medium text-gray-800 mb-2">Voice Mode</h3>
+              <p>Click "Start Voice Input" and speak your question. The AI will respond both in text and voice.</p>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h3 className="font-medium text-blue-800 mb-2">Tips</h3>
+              <ul className="list-disc list-inside space-y-1 text-blue-700">
+                <li>Ask specific questions for better answers</li>
+                <li>Use voice mode for hands-free interaction</li>
+                <li>Previous chats are saved automatically</li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -3,26 +3,48 @@ import React from 'react'
 const Spinner = () => {
     return (
         <>
-            <div 
-                role="status" 
-                className="fixed inset-0 flex justify-center items-center bg-gradient-to-r from-[#000106] via-[#282f51] to-[#000106]"
+            <div
+                role="status"
+                className="fixed inset-0 flex flex-col justify-center items-center bg-gradient-to-br from-[#000106] via-[#1a1f3a] to-[#000106] z-[9999] animate-shimmer"
             >
-                <svg
-                    aria-hidden="true"
-                    className="w-8 h-8 text-gray-200 animate-spin fill-blue-600"
-                    viewBox="0 0 100 101"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908Z"
-                        fill="currentColor"
-                    />
-                    <path
-                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                        fill="currentFill"
-                    />
-                </svg>
+                {/* Main spinning ring with glow effect */}
+                <div className="relative animate-float">
+                    <div className="w-16 h-16 border-4 border-transparent border-t-cyan-400 border-r-purple-500 border-b-pink-500 rounded-full animate-spin animate-glow"></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-4 border-transparent border-t-purple-400 border-r-pink-500 border-b-cyan-500 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full animate-pulse animate-glow"></div>
+                </div>
+
+                {/* Loading text with gradient and enhanced styling */}
+                <div className="mt-8 text-center animate-float" style={{ animationDelay: '0.5s' }}>
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent animate-pulse">
+                        Loading...
+                    </h2>
+                    <p className="text-gray-400 text-sm mt-3 animate-pulse" style={{ animationDelay: '1s' }}>
+                        Please wait while we prepare your experience
+                    </p>
+                </div>
+
+                {/* Enhanced floating particles effect */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {[...Array(8)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="absolute w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full animate-bounce opacity-60 animate-glow"
+                            style={{
+                                left: `${15 + i * 12}%`,
+                                top: `${25 + (i % 3) * 25}%`,
+                                animationDelay: `${i * 0.3}s`,
+                                animationDuration: '2.5s'
+                            }}
+                        ></div>
+                    ))}
+                </div>
+
+                {/* Additional decorative elements */}
+                <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-cyan-400 rounded-full animate-pulse opacity-40"></div>
+                <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-purple-400 rounded-full animate-pulse opacity-40" style={{ animationDelay: '0.5s' }}></div>
+                <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-pink-400 rounded-full animate-pulse opacity-40" style={{ animationDelay: '1s' }}></div>
+
                 <span className="sr-only">Loading...</span>
             </div>
         </>
