@@ -59,6 +59,16 @@ BatCheet.ai is a full-stack AI-powered platform built with ❤️ using the MERN
 
 ---
 
+# SnapShots
+![Image](https://drive.google.com/uc?export=view&id=1Tgn57q--zdg8q6ZqnFMM5BmPnN0oiBl1)
+![Image](https://drive.google.com/uc?export=view&id=1QRcEblQ3-v8KmQ5C6yWUJVtFGYQ6hPcX)
+![Image](https://drive.google.com/uc?export=view&id=13AQTNTrIQqVkzBbRYY8-qjZb-EzZjck7)
+![Image](https://drive.google.com/uc?export=view&id=1hk1m1h6I9v91SVREV3dt5DY_OOD2xwG7)
+![Image](https://drive.google.com/uc?export=view&id=1vS6ymbtw9HdMeAEIRDmMIuSzVmtv2jbk)
+![Image](https://drive.google.com/uc?export=view&id=1KttwFQ8aRhcWjjZ2idUrih-IYEcfggu9)
+
+---
+
 ## 🚀 Getting Started
 
 ### 📦 Prerequisites
@@ -68,14 +78,6 @@ BatCheet.ai is a full-stack AI-powered platform built with ❤️ using the MERN
 - Gemini API Key  
 - SMTP credentials (for email)  
 - Modern browser supporting Web Speech API (e.g., Chrome, Edge)  
-
-# SnapShots
-![Image](https://drive.google.com/uc?export=view&id=1Tgn57q--zdg8q6ZqnFMM5BmPnN0oiBl1)
-![Image](https://drive.google.com/uc?export=view&id=1QRcEblQ3-v8KmQ5C6yWUJVtFGYQ6hPcX)
-![Image](https://drive.google.com/uc?export=view&id=13AQTNTrIQqVkzBbRYY8-qjZb-EzZjck7)
-![Image](https://drive.google.com/uc?export=view&id=1hk1m1h6I9v91SVREV3dt5DY_OOD2xwG7)
-![Image](https://drive.google.com/uc?export=view&id=1vS6ymbtw9HdMeAEIRDmMIuSzVmtv2jbk)
-![Image](https://drive.google.com/uc?export=view&id=1KttwFQ8aRhcWjjZ2idUrih-IYEcfggu9)
 
 ### 🛠 Installation
 
