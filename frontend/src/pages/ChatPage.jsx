@@ -146,7 +146,6 @@ export default function ChatPage() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20">
-      {/* Main chat container */}
       <div className="flex-1 flex flex-col min-h-0">
         {!isNavigating && (
           <div className="bg-white/90 backdrop-blur-md border-b border-gray-300 px-6 py-4 shadow-sm mb-4 rounded-md max-w-4xl mx-auto">
@@ -288,7 +287,6 @@ export default function ChatPage() {
         )}
       </div>
 
-      {/* Side panel */}
       {!isNavigating && (
         <aside className="w-full md:w-80 bg-white/80 backdrop-blur-sm border-t md:border-t-0 md:border-l border-gray-200 p-4 sm:p-6 shadow-lg flex flex-col h-64 md:h-auto mt-4 md:mt-0">
           <h2 className="text-lg font-semibold mb-4 text-gray-800">How to use</h2>

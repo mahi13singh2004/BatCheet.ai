@@ -8,11 +8,7 @@ const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/
 
 export const askGemini = async (contextText, userMessage) => {
   try {
-    console.log("🔍 Gemini API Request Details:");
-    console.log("- Context text length:", contextText?.length || 0);
-    console.log("- User message length:", userMessage?.length || 0);
-    console.log("- API Key present:", !!GEMINI_API_KEY);
-    console.log("- API URL:", GEMINI_API_URL.replace(GEMINI_API_KEY, "***"));
+    
 
     if (!GEMINI_API_KEY) {
       throw new Error("GEMINI_API_KEY is not configured");
@@ -51,14 +47,10 @@ Answer:`,
       ],
     };
 
-    console.log("📤 Sending request to Gemini API...");
+    
     const res = await axios.post(GEMINI_API_URL, requestBody);
 
-    console.log("📥 Gemini API Response Status:", res.status);
-    console.log(
-      "📥 Gemini API Response Data:",
-      JSON.stringify(res.data, null, 2)
-    );
+    
 
     const reply = res.data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
@@ -73,11 +65,7 @@ Answer:`,
       );
     }
 
-    console.log("✅ Gemini API Response Length:", reply.length);
-    console.log(
-      "✅ Gemini API Response Preview:",
-      reply.substring(0, 200) + "..."
-    );
+    
 
     return reply;
   } catch (error) {

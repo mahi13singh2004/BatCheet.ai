@@ -23,7 +23,6 @@ export const uploadDocument = async (req, res) => {
         const dataBuffer = fs.readFileSync(file.path);
         const parsed = await pdfParse(dataBuffer);
         extractedText = parsed.text.trim();
-        console.log("PDF extracted text length:", extractedText.length);
       } catch (pdfError) {
         console.error("PDF parsing error:", pdfError);
         extractedText = "PDF content could not be extracted";

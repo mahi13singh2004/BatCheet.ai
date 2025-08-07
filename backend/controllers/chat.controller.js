@@ -18,14 +18,7 @@ export const chatWithDocument = async (req, res) => {
       return res.status(404).json({ message: "Document not found" });
     }
 
-    console.log(
-      "Document extracted text length:",
-      document.extractedText?.length || 0
-    );
-    console.log(
-      "Document extracted text preview:",
-      document.extractedText?.substring(0, 200) + "..."
-    );
+    
 
     const answer = await askGemini(document.extractedText, message);
 
@@ -110,15 +103,15 @@ export const summarizeChat = async (req, res) => {
     const { id } = req.params;
     const userId = req.user._id;
 
-    console.log("🔍 Document summarize request:", { documentId: id, userId });
+    
 
     const document = await Document.findOne({ _id: id, userId });
     if (!document) {
-      console.log("❌ Document not found:", id);
+      
       return res.status(404).json({ message: "Document not found" });
     }
 
-    console.log("✅ Document found:", document.title);
+  
 
     if (!document.extractedText || document.extractedText.trim() === "") {
       return res.status(400).json({
@@ -127,11 +120,9 @@ export const summarizeChat = async (req, res) => {
       });
     }
 
-    console.log("📝 Generating document summary for:", document.title);
-    console.log("📄 Document content length:", document.extractedText.length);
-
+  
     const limitedContent = document.extractedText.substring(0, 3000);
-    console.log("📄 Limited content length:", limitedContent.length);
+    
 
     const summaryPrompt = `Summarize this document in a clear, structured way. Include the main topics, key points, and important information.
 
@@ -146,9 +137,9 @@ Please provide a comprehensive summary with:
 - Important conclusions
 - Any recommendations`;
 
-    console.log("🤖 Calling AI for document summary...");
+    
     const summary = await askGemini(limitedContent, summaryPrompt);
-    console.log("✅ Document summary generated successfully");
+   
 
     if (!summary || summary.trim() === "") {
       throw new Error("AI model returned empty summary");
@@ -177,7 +168,7 @@ export const sendSummaryEmail = async (req, res) => {
     const { email } = req.body;
     const userId = req.user._id;
 
-    console.log("📧 Email request:", { documentId: id, email, userId });
+    
 
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
@@ -195,7 +186,7 @@ export const sendSummaryEmail = async (req, res) => {
       });
     }
 
-    console.log("📝 Generating summary for email...");
+  
 
     const limitedContent = document.extractedText.substring(0, 3000);
 
@@ -225,10 +216,9 @@ Please provide a comprehensive summary with:
       timestamp: new Date().toISOString(),
     };
 
-    console.log("📤 Sending email...");
-    // Send email
+
     await sendChatSummaryEmail(email, summaryData);
-    console.log("✅ Email sent successfully");
+
 
     return res.status(200).json({
       message: "Document summary sent to email successfully",

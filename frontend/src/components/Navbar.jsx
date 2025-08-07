@@ -9,7 +9,7 @@ const Navbar = () => {
   const { logout, user } = useAuthStore();
   const { startLoading } = useNavigationStore();
 
-  // Hamburger menu toggle state
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleButton = async () => {
@@ -26,23 +26,23 @@ const Navbar = () => {
   const handleLogoClick = () => {
     startLoading();
     navigate("/");
-    setMenuOpen(false); // Close menu on navigation
+    setMenuOpen(false); 
   };
 
   const handleProfileClick = () => {
     startLoading();
-    setMenuOpen(false); // Close menu on navigation
+    setMenuOpen(false); 
   };
 
   const handleUploadClick = () => {
     startLoading();
-    setMenuOpen(false); // Close menu on navigation
+    setMenuOpen(false); 
   };
 
   return (
     <nav className="h-20 w-full backdrop-blur-md border-b border-white/10 flex justify-between items-center fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 md:px-10 bg-white/50 dark:bg-black/50">
       
-      {/* Logo Section */}
+   
       <div
         className="flex items-center cursor-pointer select-none"
         onClick={handleLogoClick}
@@ -55,7 +55,6 @@ const Navbar = () => {
         </h1>
       </div>
       
-      {/* Hamburger button for mobile */}
       <button
         className="sm:hidden flex flex-col justify-center items-center w-10 h-10 rounded hover:bg-indigo-100 transition"
         onClick={() => setMenuOpen(!menuOpen)}
@@ -79,7 +78,6 @@ const Navbar = () => {
         ></span>
       </button>
       
-      {/* Nav Links & Actions */}
       <div
         className={`flex-col sm:flex-row sm:static fixed sm:flex right-0 top-20 bg-white/95 dark:bg-black/90 backdrop-blur-md sm:bg-transparent
           items-center transition-all
