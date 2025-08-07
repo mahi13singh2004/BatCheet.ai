@@ -41,13 +41,13 @@ const Navbar = () => {
       </div>
       <div className="flex items-center space-x-4">
         {user && (
-          <Link to="/profile" className="text-gray-700 hover:text-blue-600 font-medium" onClick={handleProfileClick}>
+          <Link to="/profile" className="px-4 py-2 rounded-lg font-medium text-indigo-600 hover:bg-indigo-50 transition" onClick={handleProfileClick}>
             My Documents
           </Link>
         )}
         
-        <button onClick={handleUploadClick}><Link to="/upload">Upload Now</Link></button>
-        <button className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white font-semibold px-4 py-2 transition-all hover:from-gray-700 hover:via-gray-800 hover:to-black hover:cursor-pointer rounded-full" onClick={handleButton}>
+        <button className="px-4 py-2 rounded-lg font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition" onClick={handleUploadClick}><Link to="/upload">Upload Now</Link></button>
+        <button className="px-4 py-2 rounded-lg font-medium bg-red-500 text-white hover:bg-red-600 transition" onClick={handleButton}>
           {user ? "Logout" : "Login"}
         </button>
       </div>

@@ -6,7 +6,7 @@ export const useNavigationStore = create((set) => ({
     set({ isLoading: true });
     setTimeout(() => {
       set({ isLoading: false });
-    }, 3000);
+    }, 2000);
   },
   stopLoading: () => set({ isLoading: false }),
 }));
