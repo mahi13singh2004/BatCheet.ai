@@ -6,6 +6,8 @@ axiosInstance.defaults.withCredentials = true;
 export const useChatStore = create((set) => ({
   chats: [],
   loading: false,
+  summary: null,
+  summaryLoading: false,
 
   loadChatHistory: async (docId) => {
     set({ loading: true });
@@ -57,6 +59,36 @@ export const useChatStore = create((set) => ({
     }
   },
 
+  summarizeChat: async (docId) => {
+    set({ summaryLoading: true });
+    try {
+      const res = await axiosInstance.post(`/api/docs/${docId}/summarize`);
+      set({ summary: res.data, summaryLoading: false });
+      return res.data;
+    } catch (error) {
+      console.error("❌ Summarize chat error:", error);
+      set({ summaryLoading: false });
+
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to generate summary";
+      throw new Error(errorMessage);
+    }
+  },
+
+  sendSummaryEmail: async (docId, email) => {
+    try {
+      const res = await axiosInstance.post(`/api/docs/${docId}/send-summary`, {
+        email,
+      });
+      return res.data;
+    } catch (error) {
+      console.error("❌ Send summary email error:", error);
+      throw error;
+    }
+  },
+
   clearChat: () => set({ chats: [] }),
 
   clearChatHistory: async (docId) => {
@@ -67,4 +99,6 @@ export const useChatStore = create((set) => ({
       console.error("❌ Clear chat history error:", error);
     }
   },
+
+  clearSummary: () => set({ summary: null }),
 }));

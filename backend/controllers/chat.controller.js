@@ -1,6 +1,7 @@
 import Document from "../models/doc.model.js";
 import Chat from "../models/chat.model.js";
 import { askGemini } from "../utils/gemini.js";
+import { sendChatSummaryEmail } from "../utils/email.js";
 
 export const chatWithDocument = async (req, res) => {
   try {
@@ -104,5 +105,145 @@ export const clearChatHistory = async (req, res) => {
   } catch (error) {
     console.error("❌ clearChatHistory error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const summarizeChat = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    console.log("🔍 Document summarize request:", { documentId: id, userId });
+
+    const document = await Document.findOne({ _id: id, userId });
+    if (!document) {
+      console.log("❌ Document not found:", id);
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    console.log("✅ Document found:", document.title);
+
+    if (!document.extractedText || document.extractedText.trim() === "") {
+      return res.status(400).json({
+        message:
+          "Document content is empty or could not be extracted. Please try uploading the document again.",
+      });
+    }
+
+    console.log("📝 Generating document summary for:", document.title);
+    console.log("📄 Document content length:", document.extractedText.length);
+
+    // Limit document content to avoid token limits
+    const limitedContent = document.extractedText.substring(0, 3000);
+    console.log("📄 Limited content length:", limitedContent.length);
+
+    const summaryPrompt = `Summarize this document in a clear, structured way. Include the main topics, key points, and important information.
+
+Document: ${document.title}
+
+Content:
+${limitedContent}
+
+Please provide a comprehensive summary with:
+- Main topics and themes
+- Key facts and insights
+- Important conclusions
+- Any recommendations`;
+
+    console.log("🤖 Calling AI for document summary...");
+    const summary = await askGemini(limitedContent, summaryPrompt);
+    console.log("✅ Document summary generated successfully");
+
+    if (!summary || summary.trim() === "") {
+      throw new Error("AI model returned empty summary");
+    }
+
+    return res.status(200).json({
+      summary,
+      documentTitle: document.title,
+      messageCount: 0,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("❌ summarizeChat error:", error);
+    return res.status(500).json({
+      error: error.message,
+      documentTitle: document ? document.title : "Unknown Document",
+      messageCount: 0,
+      timestamp: new Date().toISOString(),
+    });
+  }
+};
+
+export const sendSummaryEmail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email } = req.body;
+    const userId = req.user._id;
+
+    console.log("📧 Email request:", { documentId: id, email, userId });
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const document = await Document.findOne({ _id: id, userId });
+    if (!document) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    if (!document.extractedText || document.extractedText.trim() === "") {
+      return res.status(400).json({
+        message:
+          "Document content is empty or could not be extracted. Please try uploading the document again.",
+      });
+    }
+
+    console.log("📝 Generating summary for email...");
+
+    // Generate document summary - limit content to avoid token limits
+    const limitedContent = document.extractedText.substring(0, 3000);
+
+    const summaryPrompt = `Summarize this document in a clear, structured way. Include the main topics, key points, and important information.
+
+Document: ${document.title}
+
+Content:
+${limitedContent}
+
+Please provide a comprehensive summary with:
+- Main topics and themes
+- Key facts and insights
+- Important conclusions
+- Any recommendations`;
+
+    const summary = await askGemini(limitedContent, summaryPrompt);
+
+    if (!summary || summary.trim() === "") {
+      throw new Error("AI model returned empty summary for email");
+    }
+
+    const summaryData = {
+      summary,
+      documentTitle: document.title,
+      messageCount: 0, // Since we're summarizing the document, not chat
+      timestamp: new Date().toISOString(),
+    };
+
+    console.log("📤 Sending email...");
+    // Send email
+    await sendChatSummaryEmail(email, summaryData);
+    console.log("✅ Email sent successfully");
+
+    return res.status(200).json({
+      message: "Document summary sent to email successfully",
+      summaryData,
+    });
+  } catch (error) {
+    console.error("❌ sendSummaryEmail error:", error);
+    return res.status(500).json({
+      message: "Failed to send email",
+      error: error.message,
+    });
   }
 };

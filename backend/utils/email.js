@@ -1,0 +1,164 @@
+import nodemailer from "nodemailer";
+
+// Verify nodemailer is properly imported
+console.log("📧 Nodemailer package:", typeof nodemailer);
+console.log("📧 createTransport function:", typeof nodemailer.createTransport);
+console.log(
+  "📧 createTestAccount function:",
+  typeof nodemailer.createTestAccount
+);
+
+const createTestTransporter = async () => {
+  try {
+    console.log("🔧 Creating test account...");
+    const testAccount = await nodemailer.createTestAccount();
+    console.log("✅ Test account created:", testAccount.user);
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+    });
+
+    console.log("✅ Test transporter created successfully");
+    return transporter;
+  } catch (error) {
+    console.error("❌ Error creating test account:", error);
+    throw error;
+  }
+};
+
+const createProductionTransporter = () => {
+  console.log("🔧 Creating production transporter with:");
+  console.log("- SMTP_HOST:", process.env.SMTP_HOST);
+  console.log("- SMTP_PORT:", process.env.SMTP_PORT);
+  console.log("- SMTP_USER:", process.env.SMTP_USER ? "Set" : "Not set");
+  console.log("- SMTP_PASS:", process.env.SMTP_PASS ? "Set" : "Not set");
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.SMTP_PORT) || 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    console.log("✅ Production transporter created successfully");
+    return transporter;
+  } catch (error) {
+    console.error("❌ Error creating production transporter:", error);
+    throw error;
+  }
+};
+
+export const sendChatSummaryEmail = async (userEmail, summaryData) => {
+  try {
+    console.log("📧 Email Configuration:");
+    console.log("- NODE_ENV:", process.env.NODE_ENV);
+    console.log("- SMTP_HOST:", process.env.SMTP_HOST);
+    console.log("- SMTP_USER:", process.env.SMTP_USER ? "Set" : "Not set");
+    console.log("- SMTP_PASS:", process.env.SMTP_PASS ? "Set" : "Not set");
+
+    let transporter;
+
+    try {
+      if (process.env.NODE_ENV === "production") {
+        // Production mode - use real SMTP
+        if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+          throw new Error(
+            "SMTP credentials not configured for production. Please set SMTP_USER and SMTP_PASS environment variables."
+          );
+        }
+
+        transporter = createProductionTransporter();
+        console.log("📧 Using production SMTP configuration");
+      } else {
+        // Development mode - use test account
+        console.log("📧 Using development test account");
+        transporter = await createTestTransporter();
+      }
+    } catch (transporterError) {
+      console.error("❌ Failed to create transporter:", transporterError);
+      throw new Error(
+        `Failed to create email transporter: ${transporterError.message}`
+      );
+    }
+
+    const { summary, documentTitle, messageCount, timestamp } = summaryData;
+
+    // Add this check:
+    if (!summary || typeof summary !== "string" || summary.trim() === "") {
+      throw new Error("Cannot send email: summary is empty or missing.");
+    }
+
+    const mailOptions = {
+      from: process.env.SMTP_USER || '"BatCheet.ai" <noreply@batcheet.ai>',
+      to: userEmail,
+      subject: `Document Summary: ${documentTitle}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+            <h1 style="margin: 0; font-size: 24px;">📄 Document Summary</h1>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Your document summary is ready</p>
+          </div>
+          
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h2 style="color: #333; margin-top: 0;">Document: ${documentTitle}</h2>
+            <div style="display: flex; justify-content: space-between; color: #666; font-size: 14px;">
+              <span>📄 Document Summary</span>
+              <span>📅 ${new Date(timestamp).toLocaleDateString()}</span>
+            </div>
+          </div>
+          
+          <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
+            <h3 style="color: #333; margin-top: 0;">Summary</h3>
+            <div style="line-height: 1.6; color: #555; white-space: pre-wrap;">${summary}</div>
+          </div>
+          
+          <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <p style="color: #666; margin: 0;">Generated by BatCheet.ai</p>
+            <p style="color: #999; font-size: 12px; margin: 5px 0 0 0;">Your AI-powered document assistant</p>
+          </div>
+        </div>
+      `,
+      text: `
+Document Summary: ${documentTitle}
+
+Document: ${documentTitle}
+Date: ${new Date(timestamp).toLocaleDateString()}
+
+Summary:
+${summary}
+
+---
+Generated by BatCheet.ai
+      `,
+    };
+
+    console.log("📤 Sending email to:", userEmail);
+
+    // Verify transporter is working
+    if (!transporter || typeof transporter.sendMail !== "function") {
+      throw new Error("Invalid transporter - sendMail function not available");
+    }
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent successfully. Message ID:", info.messageId);
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log("📧 Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    }
+
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("❌ Error sending email:", error);
+    throw error;
+  }
+};

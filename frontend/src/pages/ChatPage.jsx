@@ -3,6 +3,7 @@ import { useChatStore } from "../store/chat.store.js";
 import { useNavigationStore } from "../store/navigation.store.js";
 import ChatMessage from "../components/ChatMessage";
 import TypingLoader from "../components/TypingLoader";
+import SummaryModal from "../components/SummaryModal.jsx";
 import { useState, useEffect, useRef } from "react";
 
 export default function ChatPage() {
@@ -11,12 +12,13 @@ export default function ChatPage() {
   const [mode, setMode] = useState("text");
   const [isListening, setIsListening] = useState(false);
   const [isRecognitionRunning, setIsRecognitionRunning] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
 
-  const { chats, sendMessage, loading, loadChatHistory, clearChatHistory } = useChatStore();
+  const { chats, sendMessage, loading, loadChatHistory, clearChatHistory, summarizeChat, sendSummaryEmail, summary, summaryLoading, clearSummary } = useChatStore();
   const { isLoading: isNavigating } = useNavigationStore();
   const recognitionRef = useRef(null);
 
-  // Load chat history when component mounts or document ID changes
+
   useEffect(() => {
     if (id && !isNavigating) {
       loadChatHistory(id);
@@ -27,6 +29,27 @@ export default function ChatPage() {
     e.preventDefault();
     sendMessage(id, input, mode === "voice");
     setInput("");
+  };
+
+  const handleSummarize = async () => {
+    try {
+      await summarizeChat(id);
+    } catch (error) {
+      alert(error.message || 'Failed to generate summary. Please try again.');
+    }
+  };
+
+  const handleSendEmail = async (email) => {
+    await sendSummaryEmail(id, email);
+  };
+
+  const handleOpenSummaryModal = () => {
+    setShowSummaryModal(true);
+  };
+
+  const handleCloseSummaryModal = () => {
+    setShowSummaryModal(false);
+    clearSummary();
   };
 
   useEffect(() => {
@@ -114,6 +137,17 @@ export default function ChatPage() {
                 Document Chat
               </h1>
               <div className="flex items-center space-x-4">
+                <button
+                  onClick={handleOpenSummaryModal}
+                  disabled={chats.length === 0}
+                  className={`text-sm font-medium transition-colors px-3 py-1 rounded-md ${chats.length === 0
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                    }`}
+                  title={chats.length === 0 ? "Start a conversation first to summarize" : "Summarize this chat"}
+                >
+                  📝 Summarize
+                </button>
                 <button
                   onClick={() => clearChatHistory(id)}
                   className="text-red-600 hover:text-red-700 text-sm font-medium transition-colors px-3 py-1 rounded-md hover:bg-red-50"
@@ -230,11 +264,21 @@ export default function ChatPage() {
                 <li>Ask specific questions for better answers</li>
                 <li>Use voice mode for hands-free interaction</li>
                 <li>Previous chats are saved automatically</li>
+                <li>Use the Summarize button to get a summary of your conversation</li>
               </ul>
             </div>
           </div>
         </div>
       )}
+
+      <SummaryModal
+        isOpen={showSummaryModal}
+        onClose={handleCloseSummaryModal}
+        summary={summary}
+        onSummarize={handleSummarize}
+        onSendEmail={handleSendEmail}
+        summaryLoading={summaryLoading}
+      />
     </div>
   );
 }
