@@ -17,10 +17,17 @@ const Navbar = () => {
         <img className="w-16 h-16" src={logo} alt="Logo" />
         <h1 className="text-3xl sm:text-4xl lg:text-5xl bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent font-bold">B<span className="text-2xl sm:text-3xl lg:text-4xl">atcheet</span><span className="text-xl sm:text-2xl lg:text-3xl">.ai</span></h1>
       </div>
-      <button className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white font-semibold px-4 py-2 transition-all hover:from-gray-700 hover:via-gray-800 hover:to-black hover:cursor-pointer rounded-full" onClick={handleButton}>
-        {user ? "Logout" : "Login"}
-      </button>
-      <button><Link to="/upload">Upload Now</Link></button>
+      <div className="flex items-center space-x-4">
+        {user && (
+          <Link to="/profile" className="text-gray-700 hover:text-blue-600 font-medium">
+            My Documents
+          </Link>
+        )}
+        <button className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white font-semibold px-4 py-2 transition-all hover:from-gray-700 hover:via-gray-800 hover:to-black hover:cursor-pointer rounded-full" onClick={handleButton}>
+          {user ? "Logout" : "Login"}
+        </button>
+        <button><Link to="/upload">Upload Now</Link></button>
+      </div>
     </nav>
   );
 };

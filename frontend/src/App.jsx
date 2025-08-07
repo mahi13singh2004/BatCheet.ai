@@ -8,6 +8,8 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import RedirectRoute from "./components/RedirectRoute"
 import Navbar from "./components/Navbar"
 import Upload from "./pages/Upload.jsx";
+import Profile from "./pages/Profile.jsx";
+import ChatPage from "./pages/ChatPage";
 const App = () => {
   const { checkAuth } = useAuthStore()
   const location = useLocation();
@@ -25,6 +27,8 @@ const App = () => {
         <Route path="/login" element={<RedirectRoute><Login /></RedirectRoute>} />
         <Route path="/signup" element={<RedirectRoute><Signup /></RedirectRoute>} />
         <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/chat/:id" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
       </Routes>
     </>
   );

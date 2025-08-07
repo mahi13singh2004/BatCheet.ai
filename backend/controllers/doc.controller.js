@@ -18,13 +18,29 @@ export const uploadDocument = async (req, res) => {
     let extractedText = "";
 
     if (fileType === "pdf") {
-      const pdfParse = (await import("pdf-parse")).default;
-      const dataBuffer = fs.readFileSync(file.path);
-      const parsed = await pdfParse(dataBuffer);
-      extractedText = parsed.text.trim();
+      try {
+        const pdfParse = (await import("pdf-parse")).default;
+        const dataBuffer = fs.readFileSync(file.path);
+        const parsed = await pdfParse(dataBuffer);
+        extractedText = parsed.text.trim();
+        console.log("PDF extracted text length:", extractedText.length);
+      } catch (pdfError) {
+        console.error("PDF parsing error:", pdfError);
+        extractedText = "PDF content could not be extracted";
+      }
     } else {
-      const result = await Tesseract.recognize(file.path, "eng");
-      extractedText = result.data.text.trim();
+      try {
+        const result = await Tesseract.recognize(file.path, "eng");
+        extractedText = result.data.text.trim();
+        console.log("Image extracted text length:", extractedText.length);
+      } catch (ocrError) {
+        console.error("OCR error:", ocrError);
+        extractedText = "Image content could not be extracted";
+      }
+    }
+
+    if (!extractedText || extractedText.length === 0) {
+      extractedText = "Document content extracted but appears to be empty";
     }
 
     const newDoc = await Document.create({
@@ -41,6 +57,23 @@ export const uploadDocument = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Error in uploadDocument:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getUserDocuments = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const documents = await Document.find({ userId })
+      .sort({ createdAt: -1 })
+      .select("title fileName fileType extractedText createdAt");
+
+    return res.status(200).json({
+      documents,
+    });
+  } catch (error) {
+    console.error("❌ Error in getUserDocuments:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

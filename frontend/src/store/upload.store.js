@@ -9,6 +9,7 @@ export const useUploadStore = create((set) => ({
 
   setTitle: (title) => set({ title }),
   setFile: (file) => set({ file }),
+  clearForm: () => set({ title: "", file: null }),
 
   uploadDocument: async () => {
     set({ isUploading: true, error: null });

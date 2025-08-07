@@ -1,23 +1,31 @@
-// src/pages/Upload.jsx
 import { useUploadStore } from "../store/upload.store";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 export default function Upload() {
     const {
         title,
         setTitle,
         setFile,
+        clearForm,
         uploadDocument,
         isUploading,
         error,
     } = useUploadStore();
 
     const navigate = useNavigate();
+    const fileInputRef = useRef(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const docId = await uploadDocument();
-        if (docId) navigate(`/chat/${docId}`);
+        if (docId) {
+            clearForm();
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+            navigate(`/chat/${docId}`);
+        }
     };
 
     return (
@@ -37,6 +45,7 @@ export default function Upload() {
                     type="file"
                     accept=".pdf, .png, .jpg, .jpeg"
                     onChange={(e) => setFile(e.target.files[0])}
+                    ref={fileInputRef}
                     className="w-full"
                     required
                 />
