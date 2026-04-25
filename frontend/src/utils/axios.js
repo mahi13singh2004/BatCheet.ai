@@ -1,8 +1,10 @@
 import axios from "axios"
 
-const axiosInstance=axios.create({
-    baseURL:"https://batcheet-ai-backend.onrender.com",
-    withCredentials:true,
+const axiosInstance = axios.create({
+    baseURL: import.meta.env.MODE === "development"
+        ? "http://localhost:5000"
+        : "https://batcheet-ai-backend.onrender.com",
+    withCredentials: true,
 })
 
 export default axiosInstance

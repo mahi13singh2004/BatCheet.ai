@@ -14,13 +14,16 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://batcheet-ai.onrender.com",
+    origin: process.env.NODE_ENV === "production"
+      ? "https://batcheet-ai.onrender.com"
+      : "http://localhost:5173",
     credentials: true,
   })
 );
 
 app.use("/api/auth", authRoutes);
 app.use("/api/docs", docRoutes);
+app.use("/api/chat", chatRoutes);
 app.get("/api/ping", (req, res) => {
   res.json({ message: "pong" });
 });

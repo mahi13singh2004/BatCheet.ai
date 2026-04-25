@@ -13,7 +13,7 @@ import Profile from "./pages/Profile.jsx";
 import ChatPage from "./pages/ChatPage";
 import Spinner from "./components/Spinner.jsx";
 import TopSpinner from "./components/TopSpinner.jsx";
-import axios from "axios";
+import axiosInstance from "./utils/axios.js";
 
 const App = () => {
   const { checkAuth, checkAuthLoading } = useAuthStore();
@@ -23,9 +23,7 @@ const App = () => {
   useEffect(() => {
     const pingBackend = async () => {
       try {
-        const res = await axios.get(
-          "https://batcheet-ai-backend.onrender.com/api/ping"
-        );
+        const res = await axiosInstance.get("/api/ping");
         console.log("✅ Backend is awake:", res.data);
       } catch (error) {
         console.error("❌ Failed to ping backend:", error.message);

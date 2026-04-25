@@ -79,19 +79,16 @@ const Navbar = () => {
         type="button"
       >
         <span
-          className={`block h-1 w-6 rounded-full bg-cyan-400 transition-all duration-300 ${
-            menuOpen ? "rotate-45 translate-y-2" : ""
-          }`}
+          className={`block h-1 w-6 rounded-full bg-cyan-400 transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""
+            }`}
         />
         <span
-          className={`block h-1 w-6 rounded-full bg-cyan-400 my-1 transition-all duration-300 ${
-            menuOpen ? "opacity-0" : ""
-          }`}
+          className={`block h-1 w-6 rounded-full bg-cyan-400 my-1 transition-all duration-300 ${menuOpen ? "opacity-0" : ""
+            }`}
         />
         <span
-          className={`block h-1 w-6 rounded-full bg-cyan-400 transition-all duration-300 ${
-            menuOpen ? "-rotate-45 -translate-y-2" : ""
-          }`}
+          className={`block h-1 w-6 rounded-full bg-cyan-400 transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""
+            }`}
         />
       </button>
 

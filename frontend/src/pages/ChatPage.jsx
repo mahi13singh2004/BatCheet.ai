@@ -157,11 +157,10 @@ export default function ChatPage() {
                 <button
                   onClick={handleOpenSummaryModal}
                   disabled={chats.length === 0}
-                  className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
-                    chats.length === 0
+                  className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${chats.length === 0
                       ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                       : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                  }`}
+                    }`}
                   title={
                     chats.length === 0
                       ? "Start a conversation first to summarize"
@@ -182,21 +181,19 @@ export default function ChatPage() {
                 <div className="bg-gray-100 rounded-lg p-1 flex shadow-sm">
                   <button
                     onClick={() => setMode("text")}
-                    className={`px-4 py-2 rounded-md transition-all duration-200 font-semibold ${
-                      mode === "text"
+                    className={`px-4 py-2 rounded-md transition-all duration-200 font-semibold ${mode === "text"
                         ? "bg-white text-blue-600 shadow-md"
                         : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                    }`}
+                      }`}
                   >
                     Text Mode
                   </button>
                   <button
                     onClick={() => setMode("voice")}
-                    className={`px-4 py-2 rounded-md transition-all duration-200 font-semibold ${
-                      mode === "voice"
+                    className={`px-4 py-2 rounded-md transition-all duration-200 font-semibold ${mode === "voice"
                         ? "bg-white text-blue-600 shadow-md"
                         : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                    }`}
+                      }`}
                   >
                     Voice Mode
                   </button>
@@ -272,11 +269,10 @@ export default function ChatPage() {
                 <div className="flex justify-center mt-2">
                   <button
                     onClick={isListening ? stopVoiceInput : startVoiceInput}
-                    className={`px-8 py-3 rounded-lg text-white font-semibold transition-all duration-200 shadow-sm ${
-                      isListening
+                    className={`px-8 py-3 rounded-lg text-white font-semibold transition-all duration-200 shadow-sm ${isListening
                         ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
                         : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-                    }`}
+                      }`}
                   >
                     {isListening ? "Stop Listening" : "Start Voice Input"}
                   </button>
